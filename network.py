@@ -196,7 +196,12 @@ def handle(client):
     try:
         while True:
             raw = client.recv(1024).decode()
-            if not raw:
+            if not raw.strip():
+                continue
+            try:
+                data = json.loads(raw)
+            except json.JSONDecodeError:
+                print("Received invalid JSON:", raw)
                 continue
 
             data = json.loads(raw)
