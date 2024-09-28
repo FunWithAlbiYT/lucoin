@@ -115,7 +115,7 @@ def verify_txs(height, txs):
         
         if tx['sender'] == "Block Reward":
             rewarded = True
-            if tx['amount'] < get_reward(height) + compute_fees(txs):
+            if tx['amount'] > get_reward(height) + compute_fees(txs):
                 conn.close()
                 return False
             
