@@ -12,6 +12,10 @@ chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 reward = 50
 halving = 120_000
 
+def get_difficulty():
+    with open("difficulty", "r") as file:
+        return int(file.read())
+
 def calculate_block(pof, prev_hash, txs):
     return (
         str(pof)
@@ -24,7 +28,7 @@ def get_reward(height):
     return reward / (2 ** halvings)
 
 def verify_block(pof, prev_hash, txs):
-    difficulty = int(open("difficulty").read()) or 6
+    difficulty = get_difficulty() or 6
     data = calculate_block(pof, prev_hash, txs).encode()
 
     return hashlib.sha256(data).hexdigest().startswith('0' * difficulty)
@@ -306,7 +310,7 @@ def handle(client):
                 }).encode())
             elif pack.type == Packet.GETREQ:
                 client.sendall(Packet(Packet.RESPONSE, {
-                    "difficulty": open("difficulty").read()
+                    "difficulty": str(get_difficulty())
                 }).encode())
             elif pack.type == Packet.BROADCAST:
                 txs = pack.data['txs']
